@@ -2,6 +2,7 @@ import React from 'react';
 require('./board.less');
 import CompLayer from './comp_layer';
 import LineLayer from './line_layer';
+import BackLayer from './back_layer';
 import PubSub from 'pubsub-js';
 import Draggable from 'react-draggable'; 
 var $=require('jquery');
@@ -16,7 +17,8 @@ function getDefaultLayout(){
 function getMockLayout(){
   return {
       comps:{
-        a1:{id:"a1",w:10,h:5,x:100,y:200,pins:[[3,0],[4,0],[5,0],[3,4],[4,4],[5,4]]},
+        a1:{id:"a1",w:10,h:5,x:100,y:200,pins:[[3,0],[4,0],[5,0],[3,4],[4,4],[5,4]],
+        background:"img/me5565.jpg"},
         a2:{id:"a2",w:8,h:3,x:300,y:100,pins:[[4,0],[2,1],[2,2]]},
         a3:{id:"a3",w:16,h:16,x:200,y:200,pins:[[0,0],[2,2],[9,9],[14,0]]}
 
@@ -47,6 +49,7 @@ export default class board extends React.Component {
     const {layout,connecting,from,to}=this.state;
     return (
       <div ref="board" className="board" onMouseMove={this.onMouseMove.bind(this)}>
+       <BackLayer layout={layout}/>
        <LineLayer layout={layout} connecting={connecting} from={from} to={to}/>
        <CompLayer layout={layout}/>
       </div>

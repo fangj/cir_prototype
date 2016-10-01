@@ -56,6 +56,10 @@ webpackJsonp([0],[
 
 	var _line_layer2 = _interopRequireDefault(_line_layer);
 
+	var _back_layer = __webpack_require__(25);
+
+	var _back_layer2 = _interopRequireDefault(_back_layer);
+
 	var _pubsubJs = __webpack_require__(7);
 
 	var _pubsubJs2 = _interopRequireDefault(_pubsubJs);
@@ -86,7 +90,8 @@ webpackJsonp([0],[
 	function getMockLayout() {
 	  return {
 	    comps: {
-	      a1: { id: "a1", w: 10, h: 5, x: 100, y: 200, pins: [[3, 0], [4, 0], [5, 0], [3, 4], [4, 4], [5, 4]] },
+	      a1: { id: "a1", w: 10, h: 5, x: 100, y: 200, pins: [[3, 0], [4, 0], [5, 0], [3, 4], [4, 4], [5, 4]],
+	        background: "img/me5565.jpg" },
 	      a2: { id: "a2", w: 8, h: 3, x: 300, y: 100, pins: [[4, 0], [2, 1], [2, 2]] },
 	      a3: { id: "a3", w: 16, h: 16, x: 200, y: 200, pins: [[0, 0], [2, 2], [9, 9], [14, 0]] }
 
@@ -130,6 +135,7 @@ webpackJsonp([0],[
 	      return _react2.default.createElement(
 	        'div',
 	        { ref: 'board', className: 'board', onMouseMove: this.onMouseMove.bind(this) },
+	        _react2.default.createElement(_back_layer2.default, { layout: layout }),
 	        _react2.default.createElement(_line_layer2.default, { layout: layout, connecting: connecting, from: from, to: to }),
 	        _react2.default.createElement(_comp_layer2.default, { layout: layout })
 	      );
@@ -330,7 +336,7 @@ webpackJsonp([0],[
 	          grid: [10, 10],
 	          zIndex: 100,
 	          onDrag: this.handleDrag.bind(this),
-	          onStop: this.handleDrag.bind(this) },
+	          onStop: this.handleDrop.bind(this) },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'comp', style: style },
@@ -343,6 +349,14 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'handleDrag',
 	    value: function handleDrag(e, position) {
+	      var x = position.x;
+	      var y = position.y;
+
+	      _pubsubJs2.default.publish("drag", { id: this.props.data.id, x: x, y: y });
+	    }
+	  }, {
+	    key: 'handleDrop',
+	    value: function handleDrop(e, position) {
 	      var lastX = position.lastX;
 	      var lastY = position.lastY;
 
@@ -29645,6 +29659,138 @@ webpackJsonp([0],[
 	return jQuery;
 	} );
 
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _back = __webpack_require__(26);
+
+	var _back2 = _interopRequireDefault(_back);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var back_layer = function (_React$Component) {
+	  _inherits(back_layer, _React$Component);
+
+	  function back_layer(props) {
+	    _classCallCheck(this, back_layer);
+
+	    return _possibleConstructorReturn(this, (back_layer.__proto__ || Object.getPrototypeOf(back_layer)).call(this, props));
+	  }
+
+	  _createClass(back_layer, [{
+	    key: 'render',
+	    value: function render() {
+	      var comps = this.props.layout.comps;
+
+	      var compnents = _.values(comps);
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'back-layer' },
+	        compnents.map(function (comp) {
+	          return _react2.default.createElement(_back2.default, { key: comp.id, data: comp });
+	        })
+	      );
+	    }
+	  }]);
+
+	  return back_layer;
+	}(_react2.default.Component);
+
+	back_layer.propTypes = {
+	  name: _react2.default.PropTypes.string
+	};
+	exports.default = back_layer;
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	__webpack_require__(27);
+
+	var back = function (_React$Component) {
+	  _inherits(back, _React$Component);
+
+	  function back(props) {
+	    _classCallCheck(this, back);
+
+	    return _possibleConstructorReturn(this, (back.__proto__ || Object.getPrototypeOf(back)).call(this, props));
+	  }
+
+	  _createClass(back, [{
+	    key: "render",
+	    value: function render() {
+	      var data = this.props.data;
+	      var x = data.x;
+	      var y = data.y;
+	      var w = data.w;
+	      var h = data.h;
+	      var background = data.background;
+
+	      if (!background) {
+	        return null;
+	      }
+	      var unit = 10;
+	      var style = { width: w * unit, height: h * unit, left: x, top: y,
+	        backgroundImage: "url(" + background + ")",
+	        backgroundSize: "cover" }; //without draggable
+
+	      return _react2.default.createElement("div", { className: "back", style: style });
+	    }
+	  }]);
+
+	  return back;
+	}(_react2.default.Component);
+
+	back.propTypes = {
+	  name: _react2.default.PropTypes.string
+	};
+	exports.default = back;
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
 
 /***/ }
 ]);

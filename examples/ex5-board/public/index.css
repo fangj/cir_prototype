@@ -4,10 +4,14 @@
   background-color: black;
   width: 10px;
   height: 10px;
+  opacity: 0.7;
 }
 .comp {
   position: absolute;
-  border: 1px gray solid;
+  border: 1px gray dashed;
+}
+.back {
+  position: absolute;
 }
 html,
 body,
@@ -23,13 +27,15 @@ body,
 }
 .board,
 .line-layer,
-.comp-layer {
+.comp-layer,
+.back-layer {
   height: 100%;
   width: 100%;
   position: absolute;
 }
 .line-layer,
-.comp-layer {
+.comp-layer,
+.back-layer {
   pointer-events: none;
 }
 .comp {

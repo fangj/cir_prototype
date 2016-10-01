@@ -27,7 +27,7 @@ export default class component extends React.Component {
         grid={[10, 10]}
         zIndex={100}
         onDrag={this.handleDrag.bind(this)}
-        onStop={this.handleDrag.bind(this)}>
+        onStop={this.handleDrop.bind(this)}>
       <div className="comp" style={style}>
       {pins.map(pin=><Pin key={pin.join(',')} pin={pin} comp={data.id}/>)}
       </div>
@@ -36,6 +36,11 @@ export default class component extends React.Component {
   }
 
   handleDrag(e,position){
+    const {x,y}=position;
+    PubSub.publish("drag",{id:this.props.data.id,x:x,y:y});
+  }
+
+  handleDrop(e,position){
     const {lastX,lastY}=position;
     PubSub.publish("drag",{id:this.props.data.id,x:lastX,y:lastY});
   }
