@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>电路图原型 by fangj</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">电路图原型</h1>
+      <h2 class="project-tagline">可以拖拽和连接的组件</h2>
+      <a href="https://github.com/fangj/cir_prototype" class="btn">View on GitHub</a>
+      <a href="https://github.com/fangj/cir_prototype/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/fangj/cir_prototype/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="电路图原型" class="anchor" href="#%E7%94%B5%E8%B7%AF%E5%9B%BE%E5%8E%9F%E5%9E%8B" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>电路图原型</h1>
+
+<h3>
+<a id="可以拖拽和连接的组件" class="anchor" href="#%E5%8F%AF%E4%BB%A5%E6%8B%96%E6%8B%BD%E5%92%8C%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%84%E4%BB%B6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>可以拖拽和连接的组件</h3>
+
+<p>1格=10px * 10px
+组件为宽w格，高h格的网格。
+组件内可以有若干个引脚，每个网格内可以有1个,位置用[x,y]表示 
+引脚之间可以连线（组件间或组件内） 
+拖拽时，组件的位置会自动对齐到最近的网格。</p>
+
+<h3>
+<a id="board组件" class="anchor" href="#board%E7%BB%84%E4%BB%B6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Board组件</h3>
+
+<p>board代表可以放置和拖拽组件的区域
+接受一个layout属性表示放置其中的元件和线
+例如：</p>
+
+<div class="highlight highlight-source-js"><pre>layout<span class="pl-k">=</span>{
+      comps<span class="pl-k">:</span>{
+        a1<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a1<span class="pl-pds">"</span></span>,w<span class="pl-k">:</span><span class="pl-c1">10</span>,h<span class="pl-k">:</span><span class="pl-c1">5</span>,x<span class="pl-k">:</span><span class="pl-c1">100</span>,y<span class="pl-k">:</span><span class="pl-c1">200</span>,pins<span class="pl-k">:</span>[[<span class="pl-c1">3</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">4</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">5</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">3</span>,<span class="pl-c1">4</span>],[<span class="pl-c1">4</span>,<span class="pl-c1">4</span>],[<span class="pl-c1">5</span>,<span class="pl-c1">4</span>]],
+        background<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>img/me5565.jpg<span class="pl-pds">"</span></span>},
+        a2<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a2<span class="pl-pds">"</span></span>,w<span class="pl-k">:</span><span class="pl-c1">8</span>,h<span class="pl-k">:</span><span class="pl-c1">3</span>,x<span class="pl-k">:</span><span class="pl-c1">300</span>,y<span class="pl-k">:</span><span class="pl-c1">100</span>,pins<span class="pl-k">:</span>[[<span class="pl-c1">4</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">2</span>,<span class="pl-c1">1</span>],[<span class="pl-c1">2</span>,<span class="pl-c1">2</span>]]},
+        a3<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a3<span class="pl-pds">"</span></span>,w<span class="pl-k">:</span><span class="pl-c1">16</span>,h<span class="pl-k">:</span><span class="pl-c1">16</span>,x<span class="pl-k">:</span><span class="pl-c1">200</span>,y<span class="pl-k">:</span><span class="pl-c1">200</span>,pins<span class="pl-k">:</span>[[<span class="pl-c1">0</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">2</span>,<span class="pl-c1">2</span>],[<span class="pl-c1">9</span>,<span class="pl-c1">9</span>],[<span class="pl-c1">14</span>,<span class="pl-c1">0</span>]]}
+      },
+      lines<span class="pl-k">:</span>{
+        l1<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>l1<span class="pl-pds">"</span></span>,from<span class="pl-k">:</span>{comp<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a1<span class="pl-pds">"</span></span>,pin<span class="pl-k">:</span>[<span class="pl-c1">3</span>,<span class="pl-c1">0</span>]},to<span class="pl-k">:</span>{comp<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a2<span class="pl-pds">"</span></span>,pin<span class="pl-k">:</span>[<span class="pl-c1">2</span>,<span class="pl-c1">2</span>]}},
+        l2<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>l2<span class="pl-pds">"</span></span>,from<span class="pl-k">:</span>{comp<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a1<span class="pl-pds">"</span></span>,pin<span class="pl-k">:</span>[<span class="pl-c1">4</span>,<span class="pl-c1">4</span>]},to<span class="pl-k">:</span>{comp<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a2<span class="pl-pds">"</span></span>,pin<span class="pl-k">:</span>[<span class="pl-c1">4</span>,<span class="pl-c1">0</span>]}}
+      }
+    }</pre></div>
+
+<p>comps中是所有组件，lines中是所有线</p>
+
+<div class="highlight highlight-source-js"><pre>a1<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a1<span class="pl-pds">"</span></span>,w<span class="pl-k">:</span><span class="pl-c1">10</span>,h<span class="pl-k">:</span><span class="pl-c1">5</span>,x<span class="pl-k">:</span><span class="pl-c1">100</span>,y<span class="pl-k">:</span><span class="pl-c1">200</span>,pins<span class="pl-k">:</span>[[<span class="pl-c1">3</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">4</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">5</span>,<span class="pl-c1">0</span>],[<span class="pl-c1">3</span>,<span class="pl-c1">4</span>],[<span class="pl-c1">4</span>,<span class="pl-c1">4</span>],[<span class="pl-c1">5</span>,<span class="pl-c1">4</span>]],
+        background<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>img/me5565.jpg<span class="pl-pds">"</span></span>}</pre></div>
+
+<p>表示有一个id为a1的组件，宽10格，高5格，左上角位置位于相对于父容器left:100像素，top:200像素的位置。<br>
+有6个引脚，分别位于组件内[第3列,第0行],[第4列,第0行]...<br>
+组件有个背景图片为img/me5565.jpg  </p>
+
+<div class="highlight highlight-source-js"><pre> l1<span class="pl-k">:</span>{id<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>l1<span class="pl-pds">"</span></span>,from<span class="pl-k">:</span>{comp<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a1<span class="pl-pds">"</span></span>,pin<span class="pl-k">:</span>[<span class="pl-c1">3</span>,<span class="pl-c1">0</span>]},to<span class="pl-k">:</span>{comp<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>a2<span class="pl-pds">"</span></span>,pin<span class="pl-k">:</span>[<span class="pl-c1">2</span>,<span class="pl-c1">2</span>]}}</pre></div>
+
+<p>表示有个id为l1的线，起始点为a1组件的[第3列，第0行]引脚，终点位置为a2组件的[第2列，第2行]引脚。</p>
+
+<p><img src="examples/ex5-board/screenshots/withbackground.png" alt="截图"></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/fangj/cir_prototype">电路图原型</a> is maintained by <a href="https://github.com/fangj">fangj</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
