@@ -4,7 +4,7 @@ import CompLayer from './comp_layer';
 import LineLayer from './line_layer';
 import PubSub from 'pubsub-js';
 import Draggable from 'react-draggable'; 
-
+var $=require('jquery');
 
 function getDefaultLayout(){
   return {
@@ -35,8 +35,10 @@ export default class board extends React.Component {
   constructor(props) {
     super(props);
     const layout=props.layout||getMockLayout();
-    this.state={layout,
-      connecting:false,from:null,to:null};
+    this.state={layout,//布局：包含元件的位置大小和线的位置
+      connecting:false,//是否处于连线状态中，即已经选中起始点，在找终点
+      from:null,//连线中的起始点，表达为{comp:id,pin:[x,y]}
+      to:null};//连线中的鼠标位置，表达为{x,y}
   }
 //CompLayer要在LineLayer之上(后)，pin才可以被点中。否则line会盖住pin
 //      <LineLayer layout={layout}/>
@@ -44,7 +46,7 @@ export default class board extends React.Component {
   render() {
     const {layout,connecting,from,to}=this.state;
     return (
-      <div className="board" onMouseMove={this.onMouseMove.bind(this)}>
+      <div ref="board" className="board" onMouseMove={this.onMouseMove.bind(this)}>
        <LineLayer layout={layout} connecting={connecting} from={from} to={to}/>
        <CompLayer layout={layout}/>
       </div>
@@ -52,11 +54,15 @@ export default class board extends React.Component {
   }
 
   onMouseMove(e){
-    var x=e.clientX,y=e.clientY;
+    // var x=e.clientX,y=e.clientY;
     // console.log("move:",x,y);
+    var board=this.refs.board;
+    var x=e.clientX-$(board).offset().left,
+    y=e.clientY-$(board).offset().top;
     const me=this;
     const {connecting}=me.state;
     if(connecting){
+      //在连线状态下，画出临时的连接线
       me.setState({to:{x,y}});
     }
   }
@@ -68,10 +74,12 @@ export default class board extends React.Component {
       const {connecting}=me.state;
       if(!connecting){
         var from=data;
-        me.setState({connecting:true,from});
+        to=null;
+        me.setState({connecting:true,from,to});
       }else{
         const {from}=me.state;
         var to=data;
+        console.log()
         var id="l"+Date.now();
         var line={id,from,to};
         me.state.layout.lines[id]=line;
