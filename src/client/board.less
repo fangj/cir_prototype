@@ -1,0 +1,26 @@
+html,body,#root{
+  height:100%;
+}
+.board,.line-layer,.comp-layer{
+  height:100%;
+  width: 100%;
+  position: absolute;
+}
+.line-layer,.comp-layer{
+  pointer-events: none;
+}
+.comp{
+    pointer-events: visible;
+}
+.pin{
+    pointer-events: visible;
+}
+path {
+    pointer-events: visible;
+    stroke-width: 8;
+    stroke: #000;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.7;
+}
+
