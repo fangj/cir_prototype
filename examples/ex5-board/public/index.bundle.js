@@ -19259,7 +19259,7 @@ webpackJsonp([0],[
 	      if (connecting && from && to) {
 	        _from = translatePoint(from, comps);
 	        var unit = 10;
-	        _to = { x: to.x - unit, y: to.y + unit / 2 };
+	        _to = { x: to.x, y: to.y };
 	        // console.log('translatePoint',from,_from);
 	      }
 	      return _react2.default.createElement(

@@ -19,7 +19,7 @@ export default class line_layer extends React.Component {
     if(connecting && from && to){
       _from=translatePoint(from,comps);
       const unit=10;
-      _to={x:to.x-unit,y:to.y+unit/2};
+      _to={x:to.x,y:to.y};
       // console.log('translatePoint',from,_from);
     }
     return (
