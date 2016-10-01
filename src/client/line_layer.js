@@ -22,7 +22,7 @@ export default class line_layer extends React.Component {
     }
     return (
       <svg className="line-layer">
-        {_lines.map(line=> <Line key={line.id} data={line}/>)}
+        {_lines.map((line,idx)=> <Line key={line.id} data={line} idx={idx}/>)}
         {!connecting?null:<Line  data={{from:_from,to:to,id:"connecting"}}/>}
       </svg>
     );
