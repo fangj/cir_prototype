@@ -14,11 +14,19 @@ export default class line_layer extends React.Component {
   render() {
     const {comps,lines}=this.props.layout;
     const _lines=translateLines(comps,lines);
+    const {connecting,from,to}=this.props;
+    var _from;
+    if(connecting && from && to){
+      _from=translatePoint(from,comps);
+      // console.log('translatePoint',from,_from);
+    }
     return (
       <svg className="line-layer">
         {_lines.map(line=> <Line key={line.id} data={line}/>)}
+        {!connecting?null:<Line  data={{from:_from,to:to,id:"connecting"}}/>}
       </svg>
     );
+    
   }
 }
 

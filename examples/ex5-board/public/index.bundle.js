@@ -104,7 +104,8 @@ webpackJsonp([0],[
 	    var _this = _possibleConstructorReturn(this, (board.__proto__ || Object.getPrototypeOf(board)).call(this, props));
 
 	    var layout = props.layout || getMockLayout();
-	    _this.state = { layout: layout };
+	    _this.state = { layout: layout,
+	      connecting: false, from: null, to: null };
 	    return _this;
 	  }
 	  //CompLayer要在LineLayer之上(后)，pin才可以被点中。否则line会盖住pin
@@ -115,12 +116,16 @@ webpackJsonp([0],[
 	  _createClass(board, [{
 	    key: 'render',
 	    value: function render() {
-	      var layout = this.state.layout;
+	      var _state = this.state;
+	      var layout = _state.layout;
+	      var connecting = _state.connecting;
+	      var from = _state.from;
+	      var to = _state.to;
 
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'board', onMouseMove: this.onMouseMove.bind(this) },
-	        _react2.default.createElement(_line_layer2.default, { layout: layout }),
+	        _react2.default.createElement(_line_layer2.default, { layout: layout, connecting: connecting, from: from, to: to }),
 	        _react2.default.createElement(_comp_layer2.default, { layout: layout })
 	      );
 	    }
@@ -130,13 +135,34 @@ webpackJsonp([0],[
 	      var x = e.clientX,
 	          y = e.clientY;
 	      // console.log("move:",x,y);
+	      var me = this;
+	      var connecting = me.state.connecting;
+
+	      if (connecting) {
+	        me.setState({ to: { x: x, y: y } });
+	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var me = this;
 	      this.tokenPin = _pubsubJs2.default.subscribe('pin', function (msg, data) {
-	        console.log('got pin click', data);
+	        console.log('got pin click', data); //{comp:id,pos:[x,y]}
+	        var connecting = me.state.connecting;
+
+	        if (!connecting) {
+	          var from = data;
+	          me.setState({ connecting: true, from: from });
+	        } else {
+	          var _from = me.state.from;
+
+	          var to = data;
+	          var id = "l" + Date.now();
+	          var line = { id: id, from: _from, to: to };
+	          me.state.layout.lines[id] = line;
+	          me.state.connecting = false;
+	          me.setState(me.state);
+	        }
 	      });
 	      this.tokenDrag = _pubsubJs2.default.subscribe('drag', function (msg, data) {
 	        console.log('got drag', data);
@@ -281,12 +307,23 @@ webpackJsonp([0],[
 	      var lines = _props$layout.lines;
 
 	      var _lines = translateLines(comps, lines);
+	      var _props = this.props;
+	      var connecting = _props.connecting;
+	      var from = _props.from;
+	      var to = _props.to;
+
+	      var _from;
+	      if (connecting && from && to) {
+	        _from = translatePoint(from, comps);
+	        // console.log('translatePoint',from,_from);
+	      }
 	      return _react2.default.createElement(
 	        'svg',
 	        { className: 'line-layer' },
 	        _lines.map(function (line) {
 	          return _react2.default.createElement(_line2.default, { key: line.id, data: line });
-	        })
+	        }),
+	        !connecting ? null : _react2.default.createElement(_line2.default, { data: { from: _from, to: to, id: "connecting" } })
 	      );
 	    }
 	  }]);
@@ -17423,7 +17460,7 @@ webpackJsonp([0],[
 	          'div',
 	          { className: 'comp', style: style },
 	          pins.map(function (pin) {
-	            return _react2.default.createElement(_pin2.default, { key: pin.join(','), pos: pin, comp: data.id });
+	            return _react2.default.createElement(_pin2.default, { key: pin.join(','), pin: pin, comp: data.id });
 	          })
 	        )
 	      );
@@ -17496,16 +17533,16 @@ webpackJsonp([0],[
 	    key: 'render',
 	    value: function render() {
 	      var _props = this.props;
-	      var pos = _props.pos;
+	      var pin = _props.pin;
 	      var comp = _props.comp;
 
 	      var unit = 10;
-	      var x = pos[0] * unit,
-	          y = pos[1] * unit;
+	      var x = pin[0] * unit,
+	          y = pin[1] * unit;
 	      var style = { left: x, top: y };
 	      return _react2.default.createElement('div', { className: 'pin', style: style, onClick: function onClick() {
-	          console.log(pos, comp);
-	          _pubsubJs2.default.publish('pin', { comp: comp, pos: pos });
+	          console.log(pin, comp);
+	          _pubsubJs2.default.publish('pin', { comp: comp, pin: pin });
 	        } });
 	    }
 	  }]);

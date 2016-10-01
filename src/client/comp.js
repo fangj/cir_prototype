@@ -29,7 +29,7 @@ export default class component extends React.Component {
         onDrag={this.handleDrag.bind(this)}
         onStop={this.handleDrag.bind(this)}>
       <div className="comp" style={style}>
-      {pins.map(pin=><Pin key={pin.join(',')} pos={pin} comp={data.id}/>)}
+      {pins.map(pin=><Pin key={pin.join(',')} pin={pin} comp={data.id}/>)}
       </div>
       </Draggable>
     );

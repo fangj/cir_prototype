@@ -32,16 +32,17 @@ export default class board extends React.Component {
   constructor(props) {
     super(props);
     const layout=props.layout||getMockLayout();
-    this.state={layout};
+    this.state={layout,
+      connecting:false,from:null,to:null};
   }
 //CompLayer要在LineLayer之上(后)，pin才可以被点中。否则line会盖住pin
 //      <LineLayer layout={layout}/>
       // <CompLayer layout={layout}/>
   render() {
-    const {layout}=this.state;
+    const {layout,connecting,from,to}=this.state;
     return (
       <div className="board" onMouseMove={this.onMouseMove.bind(this)}>
-       <LineLayer layout={layout}/>
+       <LineLayer layout={layout} connecting={connecting} from={from} to={to}/>
        <CompLayer layout={layout}/>
       </div>
     );
@@ -50,13 +51,31 @@ export default class board extends React.Component {
   onMouseMove(e){
     var x=e.clientX,y=e.clientY;
     // console.log("move:",x,y);
+    const me=this;
+    const {connecting}=me.state;
+    if(connecting){
+      me.setState({to:{x,y}});
+    }
   }
 
   componentDidMount() {
     const me=this;
     this.tokenPin=PubSub.subscribe('pin',(msg,data)=>{
-      console.log('got pin click',data);
-    })
+      console.log('got pin click',data);//{comp:id,pos:[x,y]}
+      const {connecting}=me.state;
+      if(!connecting){
+        var from=data;
+        me.setState({connecting:true,from});
+      }else{
+        const {from}=me.state;
+        var to=data;
+        var id="l"+Date.now();
+        var line={id,from,to};
+        me.state.layout.lines[id]=line;
+        me.state.connecting=false;
+        me.setState(me.state);
+      }
+    });
     this.tokenDrag=PubSub.subscribe('drag',(msg,data)=>{
       console.log('got drag',data);
       var comps=me.state.layout.comps;
