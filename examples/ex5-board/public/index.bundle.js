@@ -86,7 +86,9 @@ webpackJsonp([0],[
 	  return {
 	    comps: {
 	      a1: { id: "a1", w: 10, h: 5, x: 100, y: 200, pins: [[3, 0], [4, 0], [5, 0], [3, 4], [4, 4], [5, 4]] },
-	      a2: { id: "a2", w: 8, h: 3, x: 300, y: 100, pins: [[4, 0], [2, 1], [2, 2]] }
+	      a2: { id: "a2", w: 8, h: 3, x: 300, y: 100, pins: [[4, 0], [2, 1], [2, 2]] },
+	      a3: { id: "a3", w: 16, h: 16, x: 200, y: 200, pins: [[0, 0], [2, 2], [9, 9], [14, 0]] }
+
 	    },
 	    lines: {
 	      l1: { id: "l1", from: { comp: "a1", pin: [3, 0] }, to: { comp: "a2", pin: [2, 2] } },
@@ -19253,9 +19255,11 @@ webpackJsonp([0],[
 	      var from = _props.from;
 	      var to = _props.to;
 
-	      var _from;
+	      var _from, _to;
 	      if (connecting && from && to) {
 	        _from = translatePoint(from, comps);
+	        var unit = 10;
+	        _to = { x: to.x - unit, y: to.y + unit / 2 };
 	        // console.log('translatePoint',from,_from);
 	      }
 	      return _react2.default.createElement(
@@ -19264,7 +19268,7 @@ webpackJsonp([0],[
 	        _lines.map(function (line, idx) {
 	          return _react2.default.createElement(_line2.default, { key: line.id, data: line, idx: idx });
 	        }),
-	        !connecting ? null : _react2.default.createElement(_line2.default, { data: { from: _from, to: to, id: "connecting" } })
+	        !connecting ? null : _react2.default.createElement(_line2.default, { data: { from: _from, to: _to, id: "connecting" } })
 	      );
 	    }
 	  }]);

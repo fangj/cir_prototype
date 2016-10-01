@@ -15,15 +15,17 @@ export default class line_layer extends React.Component {
     const {comps,lines}=this.props.layout;
     const _lines=translateLines(comps,lines);
     const {connecting,from,to}=this.props;
-    var _from;
+    var _from,_to;
     if(connecting && from && to){
       _from=translatePoint(from,comps);
+      const unit=10;
+      _to={x:to.x-unit,y:to.y+unit/2};
       // console.log('translatePoint',from,_from);
     }
     return (
       <svg className="line-layer">
         {_lines.map((line,idx)=> <Line key={line.id} data={line} idx={idx}/>)}
-        {!connecting?null:<Line  data={{from:_from,to:to,id:"connecting"}}/>}
+        {!connecting?null:<Line  data={{from:_from,to:_to,id:"connecting"}}/>}
       </svg>
     );
     
