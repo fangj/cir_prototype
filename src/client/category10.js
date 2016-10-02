@@ -1,3 +1,4 @@
+//来自D3JS，返回有10个颜色的数组
 import colors from "./colors";
 
 export default colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");

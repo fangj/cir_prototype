@@ -1,3 +1,6 @@
+/**
+ * 背景层，放置背景图片
+ */
 import React from 'react';
 import Background from './back';
 

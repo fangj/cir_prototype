@@ -1,3 +1,6 @@
+/**
+ * 引脚层，10*10像素的圆形，点击后发送引脚信息{comp:"id",pin:[x,y]}到board
+ */
 import React from 'react';
 require('./pin.less');
 import PubSub from 'pubsub-js';

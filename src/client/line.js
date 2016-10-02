@@ -1,3 +1,7 @@
+/**
+ * 画线组件。根据起点终点绘制连线
+ * 根据idx自动赋予颜色
+ */
 import React from 'react';
 import colors from './category10';
 console.log("colors",colors);

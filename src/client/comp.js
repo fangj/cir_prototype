@@ -1,3 +1,6 @@
+/**
+ * 组件层，根据layout绘制组件和引脚，组件拖动时向board发消息告知拖动位置
+ */
 import React from 'react';
 require("./comp.less");
 import Pin from './pin';

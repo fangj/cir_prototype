@@ -1,3 +1,6 @@
+/**
+ * 连线层，把连线的单元格坐标转换为像素坐标。并调用Line组件绘制连线。
+ */
 import React from 'react';
 var _=require('lodash');
 import Line from './line';

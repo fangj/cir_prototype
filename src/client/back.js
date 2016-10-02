@@ -1,3 +1,6 @@
+/**
+ * 背景图片，撑满整个组件大小
+ */
 import React from 'react';
 require("./back.less");
 export default class back extends React.Component {
