@@ -1,5 +1,6 @@
 # 电路图原型
 
+### [DEMO](https://fangj.github.io/cir_prototype/demo/index.html)
 
 ### 可以拖拽和连接的组件
 
