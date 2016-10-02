@@ -2,6 +2,9 @@
 
 ### [DEMO](https://fangj.github.io/cir_prototype/demo/index.html)
 
+![截图](examples/ex5-board/screenshots/withbackground.png)
+
+
 ### 可以拖拽和连接的组件
 
 1格=10px * 10px
@@ -50,4 +53,4 @@ a1:{id:"a1",w:10,h:5,x:100,y:200,pins:[[3,0],[4,0],[5,0],[3,4],[4,4],[5,4]],
 表示有个id为l1的线，起始点为a1组件的[第3列，第0行]引脚，终点位置为a2组件的[第2列，第2行]引脚。
 
 
-![截图](examples/ex5-board/screenshots/withbackground.png)
+
