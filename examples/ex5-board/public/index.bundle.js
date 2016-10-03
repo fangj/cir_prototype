@@ -56,7 +56,7 @@ webpackJsonp([0],[
 
 	var _line_layer2 = _interopRequireDefault(_line_layer);
 
-	var _back_layer = __webpack_require__(25);
+	var _back_layer = __webpack_require__(21);
 
 	var _back_layer2 = _interopRequireDefault(_back_layer);
 
@@ -74,11 +74,89 @@ webpackJsonp([0],[
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               1格=10px * 10px  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               组件为宽w格，高h格的网格。  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               组件内可以有若干个引脚，每个网格内可以有1个,位置用[x,y]表示   
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               引脚之间可以连线（组件间或组件内）  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               拖拽时，组件的位置会自动对齐到最近的网格。  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ### Board组件
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               board代表可以放置和拖拽组件的区域  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               接受一个layout属性表示放置其中的元件和线  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               例如：  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ```js
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               layout={
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     comps:{
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       a1:{id:"a1",w:10,h:5,x:100,y:200,pins:[[3,0],[4,0],[5,0],[3,4],[4,4],[5,4]],
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       background:"img/me5565.jpg"},
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       a2:{id:"a2",w:8,h:3,x:300,y:100,pins:[[4,0],[2,1],[2,2]]},
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       a3:{id:"a3",w:16,h:16,x:200,y:200,pins:[[0,0],[2,2],[9,9],[14,0]]}
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     lines:{
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       l1:{id:"l1",from:{comp:"a1",pin:[3,0]},to:{comp:"a2",pin:[2,2]}},
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       l2:{id:"l2",from:{comp:"a1",pin:[4,4]},to:{comp:"a2",pin:[4,0]}}
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     }
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   }
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ```
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               comps中是所有组件，lines中是所有线
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ```js
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               a1:{id:"a1",w:10,h:5,x:100,y:200,pins:[[3,0],[4,0],[5,0],[3,4],[4,4],[5,4]],
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       background:"img/me5565.jpg"}
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ```
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               表示有一个id为a1的组件，宽10格，高5格，左上角位置位于相对于父容器left:100像素，top:200像素的位置。  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               有6个引脚，分别位于组件内[第3列,第0行],[第4列,第0行]...  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               组件有个背景图片为img/me5565.jpg  
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ```js
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                l1:{id:"l1",from:{comp:"a1",pin:[3,0]},to:{comp:"a2",pin:[2,2]}}
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ```
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               表示有个id为l1的线，起始点为a1组件的[第3列，第0行]引脚，终点位置为a2组件的[第2列，第2行]引脚。
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ### Board分为三层
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                背景层:      <BackLayer layout={layout}/> 
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                连线层:      <LineLayer layout={layout} connecting={connecting} from={from} to={to}/>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                组件层:      <CompLayer layout={layout}/>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                背景层在最下层有组件的背景图片。不响应事件
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                连线层居中，包含连线，响应点击
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                组件层最上，包含pin脚，响应点击
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                层的顺序为何如此安排？因为线层必须在pin之下，否则线盖住pin后，pin无法点击
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                css中需要调整，详见borad.less
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .line-layer,.comp-layer,.back-layer{
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 pointer-events: none;//不响应鼠标
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .comp{
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   pointer-events: visible;//响应鼠标
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .pin{
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   pointer-events: visible;//响应鼠标
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               path {
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   pointer-events: visible;//响应鼠标
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ###连接状态
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                connecting,from,to
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                connecting=true表示已经连接了起始点，在寻找终点
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                此时绘制一根[起始点from,鼠标所在位置to]的连线
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                from表示为[comp,pin]的格式
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                to表示为像素[x,y]
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                因此在连线层需要把from换成像素坐标，to不用换。
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
-	__webpack_require__(19);
 
-	var $ = __webpack_require__(24);
+	__webpack_require__(25);
+
+	var $ = __webpack_require__(27);
 
 	function getDefaultLayout() {
 	  return {
@@ -146,8 +224,8 @@ webpackJsonp([0],[
 	      // var x=e.clientX,y=e.clientY;
 	      // console.log("move:",x,y);
 	      var board = this.refs.board;
-	      var x = e.clientX - $(board).offset().left,
-	          y = e.clientY - $(board).offset().top;
+	      var x = e.pageX - $(board).offset().left,
+	          y = e.pageY - $(board).offset().top;
 	      var me = this;
 	      var connecting = me.state.connecting;
 
@@ -301,7 +379,10 @@ webpackJsonp([0],[
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 组件层，根据layout绘制组件和引脚，组件拖动时向board发消息告知拖动位置
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	__webpack_require__(13);
 
@@ -398,7 +479,10 @@ webpackJsonp([0],[
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 引脚层，10*10像素的圆形，点击后发送引脚信息{comp:"id",pin:[x,y]}到board
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	__webpack_require__(8);
 
@@ -19251,7 +19335,10 @@ webpackJsonp([0],[
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 连线层，把连线的单元格坐标转换为像素坐标。并调用Line组件绘制连线。
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	var _ = __webpack_require__(15);
 
@@ -19338,7 +19425,7 @@ webpackJsonp([0],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _category = __webpack_require__(21);
+	var _category = __webpack_require__(19);
 
 	var _category2 = _interopRequireDefault(_category);
 
@@ -19348,7 +19435,11 @@ webpackJsonp([0],[
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 画线组件。根据起点终点绘制连线
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 根据idx自动赋予颜色
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	console.log("colors", _category2.default);
 
@@ -19394,13 +19485,6 @@ webpackJsonp([0],[
 
 /***/ },
 /* 19 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 20 */,
-/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19409,16 +19493,16 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _colors = __webpack_require__(22);
+	var _colors = __webpack_require__(20);
 
 	var _colors2 = _interopRequireDefault(_colors);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = (0, _colors2.default)("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
+	exports.default = (0, _colors2.default)("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf"); //来自D3JS，返回有10个颜色的数组
 
 /***/ },
-/* 22 */
+/* 20 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19434,8 +19518,153 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 23 */,
-/* 24 */
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _back = __webpack_require__(22);
+
+	var _back2 = _interopRequireDefault(_back);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 背景层，放置背景图片
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var back_layer = function (_React$Component) {
+	  _inherits(back_layer, _React$Component);
+
+	  function back_layer(props) {
+	    _classCallCheck(this, back_layer);
+
+	    return _possibleConstructorReturn(this, (back_layer.__proto__ || Object.getPrototypeOf(back_layer)).call(this, props));
+	  }
+
+	  _createClass(back_layer, [{
+	    key: 'render',
+	    value: function render() {
+	      var comps = this.props.layout.comps;
+
+	      var compnents = _.values(comps);
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'back-layer' },
+	        compnents.map(function (comp) {
+	          return _react2.default.createElement(_back2.default, { key: comp.id, data: comp });
+	        })
+	      );
+	    }
+	  }]);
+
+	  return back_layer;
+	}(_react2.default.Component);
+
+	back_layer.propTypes = {
+	  name: _react2.default.PropTypes.string
+	};
+	exports.default = back_layer;
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 背景图片，撑满整个组件大小
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	__webpack_require__(23);
+
+	var back = function (_React$Component) {
+	  _inherits(back, _React$Component);
+
+	  function back(props) {
+	    _classCallCheck(this, back);
+
+	    return _possibleConstructorReturn(this, (back.__proto__ || Object.getPrototypeOf(back)).call(this, props));
+	  }
+
+	  _createClass(back, [{
+	    key: "render",
+	    value: function render() {
+	      var data = this.props.data;
+	      var x = data.x;
+	      var y = data.y;
+	      var w = data.w;
+	      var h = data.h;
+	      var background = data.background;
+
+	      if (!background) {
+	        return null;
+	      }
+	      var unit = 10;
+	      var style = { width: w * unit, height: h * unit, left: x, top: y,
+	        backgroundImage: "url(" + background + ")",
+	        backgroundSize: "cover" }; //without draggable
+
+	      return _react2.default.createElement("div", { className: "back", style: style });
+	    }
+	  }]);
+
+	  return back;
+	}(_react2.default.Component);
+
+	back.propTypes = {
+	  name: _react2.default.PropTypes.string
+	};
+	exports.default = back;
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 24 */,
+/* 25 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 26 */,
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -29659,138 +29888,6 @@ webpackJsonp([0],[
 	return jQuery;
 	} );
 
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _back = __webpack_require__(26);
-
-	var _back2 = _interopRequireDefault(_back);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var back_layer = function (_React$Component) {
-	  _inherits(back_layer, _React$Component);
-
-	  function back_layer(props) {
-	    _classCallCheck(this, back_layer);
-
-	    return _possibleConstructorReturn(this, (back_layer.__proto__ || Object.getPrototypeOf(back_layer)).call(this, props));
-	  }
-
-	  _createClass(back_layer, [{
-	    key: 'render',
-	    value: function render() {
-	      var comps = this.props.layout.comps;
-
-	      var compnents = _.values(comps);
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'back-layer' },
-	        compnents.map(function (comp) {
-	          return _react2.default.createElement(_back2.default, { key: comp.id, data: comp });
-	        })
-	      );
-	    }
-	  }]);
-
-	  return back_layer;
-	}(_react2.default.Component);
-
-	back_layer.propTypes = {
-	  name: _react2.default.PropTypes.string
-	};
-	exports.default = back_layer;
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	__webpack_require__(27);
-
-	var back = function (_React$Component) {
-	  _inherits(back, _React$Component);
-
-	  function back(props) {
-	    _classCallCheck(this, back);
-
-	    return _possibleConstructorReturn(this, (back.__proto__ || Object.getPrototypeOf(back)).call(this, props));
-	  }
-
-	  _createClass(back, [{
-	    key: "render",
-	    value: function render() {
-	      var data = this.props.data;
-	      var x = data.x;
-	      var y = data.y;
-	      var w = data.w;
-	      var h = data.h;
-	      var background = data.background;
-
-	      if (!background) {
-	        return null;
-	      }
-	      var unit = 10;
-	      var style = { width: w * unit, height: h * unit, left: x, top: y,
-	        backgroundImage: "url(" + background + ")",
-	        backgroundSize: "cover" }; //without draggable
-
-	      return _react2.default.createElement("div", { className: "back", style: style });
-	    }
-	  }]);
-
-	  return back;
-	}(_react2.default.Component);
-
-	back.propTypes = {
-	  name: _react2.default.PropTypes.string
-	};
-	exports.default = back;
-
-/***/ },
-/* 27 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
 
 /***/ }
 ]);

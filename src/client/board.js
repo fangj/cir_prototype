@@ -138,8 +138,8 @@ export default class board extends React.Component {
     // var x=e.clientX,y=e.clientY;
     // console.log("move:",x,y);
     var board=this.refs.board;
-    var x=e.clientX-$(board).offset().left,
-    y=e.clientY-$(board).offset().top;
+    var x=e.pageX-$(board).offset().left,
+    y=e.pageY-$(board).offset().top;
     const me=this;
     const {connecting}=me.state;
     if(connecting){
